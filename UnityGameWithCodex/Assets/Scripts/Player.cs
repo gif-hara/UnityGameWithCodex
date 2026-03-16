@@ -6,8 +6,14 @@ namespace UnityGameWithCodex
 {
     public class Player : MonoBehaviour
     {
+        private static readonly Vector3 ViewportCenter = new(0.5f, 0.5f, 0f);
+        private const float MaxShotDistance = 1000f;
+
         [SerializeField] private Camera targetCamera;
         [SerializeField] private float sensitivity = 0.1f;
+        [SerializeField] private Transform muzzleTransform;
+        [SerializeField] private Bullet bulletPrefab;
+        [SerializeField] private BulletPool bulletPool;
 
         private float pitch;
         private float yaw;
@@ -45,6 +51,34 @@ namespace UnityGameWithCodex
             pitch = Mathf.Clamp(pitch, -89f, 89f);
 
             targetCamera.transform.localRotation = Quaternion.Euler(pitch, yaw, 0f);
+
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                Shoot();
+            }
+        }
+
+        private void Shoot()
+        {
+            Assert.IsNotNull(muzzleTransform, "Player requires a muzzle transform.");
+            Assert.IsNotNull(bulletPrefab, "Player requires a bullet prefab.");
+            Assert.IsNotNull(bulletPool, "Player requires a bullet pool.");
+
+            if (muzzleTransform == null || bulletPrefab == null || bulletPool == null)
+            {
+                return;
+            }
+
+            Ray centerRay = targetCamera.ViewportPointToRay(ViewportCenter);
+            Vector3 targetPoint = centerRay.origin + (centerRay.direction * MaxShotDistance);
+
+            if (Physics.Raycast(centerRay, out RaycastHit hitInfo, MaxShotDistance))
+            {
+                targetPoint = hitInfo.point;
+            }
+
+            Vector3 direction = (targetPoint - muzzleTransform.position).normalized;
+            bulletPool.Spawn(bulletPrefab, muzzleTransform.position, Quaternion.LookRotation(direction));
         }
     }
 }
