@@ -1,11 +1,15 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Assertions;
+using UnityEngine.Pool;
 
 namespace UnityGameWithCodex
 {
     public class Player : MonoBehaviour
     {
+        private static readonly Vector3 ViewportCenter = new(0.5f, 0.5f, 0f);
+        private const float MaxShotDistance = 1000f;
+
         [SerializeField] private Camera targetCamera;
         [SerializeField] private float sensitivity = 0.1f;
         [SerializeField] private Transform muzzleTransform;
@@ -15,6 +19,7 @@ namespace UnityGameWithCodex
 
         private float pitch;
         private float yaw;
+        private ObjectPool<Bullet> bulletPool;
 
         private void Awake()
         {
@@ -34,6 +39,8 @@ namespace UnityGameWithCodex
             Vector3 currentEulerAngles = targetCamera.transform.localEulerAngles;
             pitch = currentEulerAngles.x.NormalizeAngle();
             yaw = currentEulerAngles.y.NormalizeAngle();
+
+            bulletPool = new ObjectPool<Bullet>(CreateBullet, OnGetBullet, OnReleaseBullet, OnDestroyBullet);
         }
 
         private void Update()
@@ -66,17 +73,46 @@ namespace UnityGameWithCodex
                 return;
             }
 
-            Ray centerRay = targetCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-            Vector3 targetPoint = centerRay.origin + centerRay.direction * 1000f;
+            Ray centerRay = targetCamera.ViewportPointToRay(ViewportCenter);
+            Vector3 targetPoint = centerRay.origin + (centerRay.direction * MaxShotDistance);
 
-            if (Physics.Raycast(centerRay, out RaycastHit hitInfo, 1000f))
+            if (Physics.Raycast(centerRay, out RaycastHit hitInfo, MaxShotDistance))
             {
                 targetPoint = hitInfo.point;
             }
 
             Vector3 direction = (targetPoint - muzzleTransform.position).normalized;
-            Bullet bullet = Instantiate(bulletPrefab, muzzleTransform.position, Quaternion.LookRotation(direction));
-            bullet.Initialize(direction, bulletSpeed, bulletLifetime);
+            Bullet bullet = bulletPool.Get();
+            bullet.transform.SetPositionAndRotation(muzzleTransform.position, Quaternion.LookRotation(direction));
+            bullet.Launch(direction, bulletSpeed, bulletLifetime);
+        }
+
+        private Bullet CreateBullet()
+        {
+            Bullet bullet = Instantiate(bulletPrefab);
+            bullet.SetPool(bulletPool);
+            bullet.gameObject.SetActive(false);
+            return bullet;
+        }
+
+        private static void OnGetBullet(Bullet bullet)
+        {
+            bullet.gameObject.SetActive(true);
+        }
+
+        private static void OnReleaseBullet(Bullet bullet)
+        {
+            bullet.gameObject.SetActive(false);
+        }
+
+        private static void OnDestroyBullet(Bullet bullet)
+        {
+            Destroy(bullet.gameObject);
+        }
+
+        private void OnDestroy()
+        {
+            bulletPool?.Clear();
         }
     }
 }

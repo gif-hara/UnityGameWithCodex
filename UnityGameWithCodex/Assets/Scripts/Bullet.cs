@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace UnityGameWithCodex
 {
@@ -9,8 +10,14 @@ namespace UnityGameWithCodex
 
         private Vector3 direction = Vector3.forward;
         private float elapsedTime;
+        private IObjectPool<Bullet> pool;
 
-        public void Initialize(Vector3 moveDirection, float moveSpeed, float lifeSeconds)
+        public void SetPool(IObjectPool<Bullet> ownerPool)
+        {
+            pool = ownerPool;
+        }
+
+        public void Launch(Vector3 moveDirection, float moveSpeed, float lifeSeconds)
         {
             direction = moveDirection.normalized;
             speed = moveSpeed;
@@ -25,6 +32,12 @@ namespace UnityGameWithCodex
             elapsedTime += Time.deltaTime;
             if (elapsedTime >= lifetime)
             {
+                if (pool != null)
+                {
+                    pool.Release(this);
+                    return;
+                }
+
                 Destroy(gameObject);
             }
         }
