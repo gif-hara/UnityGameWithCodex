@@ -42,22 +42,38 @@ namespace UnityGameWithCodex
 
         private static void OnGetBullet(Bullet bullet)
         {
+            if (bullet == null)
+            {
+                return;
+            }
+
             bullet.gameObject.SetActive(true);
         }
 
         private static void OnReleaseBullet(Bullet bullet)
         {
+            if (bullet == null)
+            {
+                return;
+            }
+
             bullet.gameObject.SetActive(false);
         }
 
         private static void OnDestroyBullet(Bullet bullet)
         {
+            if (bullet == null)
+            {
+                return;
+            }
+
             Destroy(bullet.gameObject);
         }
 
         private void OnDestroy()
         {
             pool?.Clear();
+            pool = null;
         }
     }
 }
