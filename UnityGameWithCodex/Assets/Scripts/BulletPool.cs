@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Pool;
@@ -6,37 +7,44 @@ namespace UnityGameWithCodex
 {
     public class BulletPool : MonoBehaviour
     {
-        [SerializeField] private Bullet bulletPrefab;
+        private readonly Dictionary<Bullet, ObjectPool<Bullet>> pools = new();
 
-        private ObjectPool<Bullet> pool;
-
-        private void Awake()
+        public Bullet Spawn(Bullet bulletPrefab, Vector3 position, Quaternion rotation)
         {
             Assert.IsNotNull(bulletPrefab, "BulletPool requires a bullet prefab.");
 
             if (bulletPrefab == null)
             {
-                enabled = false;
-                return;
+                return null;
             }
 
-            pool = new ObjectPool<Bullet>(CreateBullet, OnGetBullet, OnReleaseBullet, OnDestroyBullet);
-        }
-
-        public Bullet Spawn(Vector3 position, Quaternion rotation)
-        {
-            Assert.IsNotNull(pool, "BulletPool is not initialized.");
-
+            ObjectPool<Bullet> pool = GetOrCreatePool(bulletPrefab);
             Bullet bullet = pool.Get();
             bullet.transform.SetPositionAndRotation(position, rotation);
             bullet.OnSpawned();
             return bullet;
         }
 
-        private Bullet CreateBullet()
+        private ObjectPool<Bullet> GetOrCreatePool(Bullet bulletPrefab)
+        {
+            if (pools.TryGetValue(bulletPrefab, out ObjectPool<Bullet> pool))
+            {
+                return pool;
+            }
+
+            pool = new ObjectPool<Bullet>(
+                () => CreateBullet(bulletPrefab),
+                OnGetBullet,
+                OnReleaseBullet,
+                OnDestroyBullet);
+            pools.Add(bulletPrefab, pool);
+            return pool;
+        }
+
+        private Bullet CreateBullet(Bullet bulletPrefab)
         {
             Bullet bullet = Instantiate(bulletPrefab);
-            bullet.SetPool(pool);
+            bullet.SetPool(GetOrCreatePool(bulletPrefab));
             bullet.gameObject.SetActive(false);
             return bullet;
         }
@@ -73,8 +81,12 @@ namespace UnityGameWithCodex
 
         private void OnDestroy()
         {
-            pool?.Clear();
-            pool = null;
+            foreach (ObjectPool<Bullet> pool in pools.Values)
+            {
+                pool.Clear();
+            }
+
+            pools.Clear();
         }
     }
 }

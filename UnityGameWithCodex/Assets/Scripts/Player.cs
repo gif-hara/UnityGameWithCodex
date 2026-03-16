@@ -12,6 +12,7 @@ namespace UnityGameWithCodex
         [SerializeField] private Camera targetCamera;
         [SerializeField] private float sensitivity = 0.1f;
         [SerializeField] private Transform muzzleTransform;
+        [SerializeField] private Bullet bulletPrefab;
         [SerializeField] private BulletPool bulletPool;
 
         private float pitch;
@@ -60,9 +61,10 @@ namespace UnityGameWithCodex
         private void Shoot()
         {
             Assert.IsNotNull(muzzleTransform, "Player requires a muzzle transform.");
+            Assert.IsNotNull(bulletPrefab, "Player requires a bullet prefab.");
             Assert.IsNotNull(bulletPool, "Player requires a bullet pool.");
 
-            if (muzzleTransform == null || bulletPool == null)
+            if (muzzleTransform == null || bulletPrefab == null || bulletPool == null)
             {
                 return;
             }
@@ -76,7 +78,7 @@ namespace UnityGameWithCodex
             }
 
             Vector3 direction = (targetPoint - muzzleTransform.position).normalized;
-            bulletPool.Spawn(muzzleTransform.position, Quaternion.LookRotation(direction));
+            bulletPool.Spawn(bulletPrefab, muzzleTransform.position, Quaternion.LookRotation(direction));
         }
     }
 }

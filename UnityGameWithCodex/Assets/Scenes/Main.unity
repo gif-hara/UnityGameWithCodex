@@ -148,7 +148,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fdf6abecadfb8a4ebd67e680a5a1199, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnityGameWithCodex.BulletPool
-  bulletPrefab: {fileID: 6623383644496919871, guid: 3ba6e9027e21f5f45a10d27ccfb83305, type: 3}
 --- !u!4 &296166735
 Transform:
   m_ObjectHideFlags: 0
@@ -764,8 +763,6 @@ MonoBehaviour:
   sensitivity: 0.5
   muzzleTransform: {fileID: 2020984324}
   bulletPrefab: {fileID: 6623383644496919871, guid: 3ba6e9027e21f5f45a10d27ccfb83305, type: 3}
-  bulletSpeed: 40
-  bulletLifetime: 3
   bulletPool: {fileID: 296166734}
 --- !u!4 &1928117972
 Transform:
