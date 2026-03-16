@@ -8,7 +8,6 @@ namespace UnityGameWithCodex
     {
         [SerializeField] private Camera targetCamera;
         [SerializeField] private float sensitivity = 0.1f;
-        [SerializeField] private Transform handTransform;
         [SerializeField] private Transform muzzleTransform;
         [SerializeField] private Bullet bulletPrefab;
         [SerializeField] private float bulletSpeed = 40f;
