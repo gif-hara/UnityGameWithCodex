@@ -8,7 +8,6 @@ namespace UnityGameWithCodex
         [SerializeField] private float speed = 40f;
         [SerializeField] private float lifetime = 3f;
 
-        private Vector3 direction = Vector3.forward;
         private float elapsedTime;
         private IObjectPool<Bullet> pool;
 
@@ -17,17 +16,14 @@ namespace UnityGameWithCodex
             pool = ownerPool;
         }
 
-        public void Launch(Vector3 moveDirection, float moveSpeed, float lifeSeconds)
+        public void OnSpawned()
         {
-            direction = moveDirection.normalized;
-            speed = moveSpeed;
-            lifetime = lifeSeconds;
             elapsedTime = 0f;
         }
 
         private void Update()
         {
-            transform.position += direction * (speed * Time.deltaTime);
+            transform.position += transform.forward * (speed * Time.deltaTime);
 
             elapsedTime += Time.deltaTime;
             if (elapsedTime >= lifetime)

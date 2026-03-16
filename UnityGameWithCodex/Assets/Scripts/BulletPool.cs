@@ -29,6 +29,7 @@ namespace UnityGameWithCodex
 
             Bullet bullet = pool.Get();
             bullet.transform.SetPositionAndRotation(position, rotation);
+            bullet.OnSpawned();
             return bullet;
         }
 
@@ -40,7 +41,7 @@ namespace UnityGameWithCodex
             return bullet;
         }
 
-        private static void OnGetBullet(Bullet bullet)
+        private void OnGetBullet(Bullet bullet)
         {
             if (bullet == null)
             {
@@ -50,7 +51,7 @@ namespace UnityGameWithCodex
             bullet.gameObject.SetActive(true);
         }
 
-        private static void OnReleaseBullet(Bullet bullet)
+        private void OnReleaseBullet(Bullet bullet)
         {
             if (bullet == null)
             {
@@ -60,7 +61,7 @@ namespace UnityGameWithCodex
             bullet.gameObject.SetActive(false);
         }
 
-        private static void OnDestroyBullet(Bullet bullet)
+        private void OnDestroyBullet(Bullet bullet)
         {
             if (bullet == null)
             {

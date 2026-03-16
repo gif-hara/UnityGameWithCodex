@@ -12,9 +12,6 @@ namespace UnityGameWithCodex
         [SerializeField] private Camera targetCamera;
         [SerializeField] private float sensitivity = 0.1f;
         [SerializeField] private Transform muzzleTransform;
-        [SerializeField] private Bullet bulletPrefab;
-        [SerializeField] private float bulletSpeed = 40f;
-        [SerializeField] private float bulletLifetime = 3f;
         [SerializeField] private BulletPool bulletPool;
 
         private float pitch;
@@ -79,8 +76,7 @@ namespace UnityGameWithCodex
             }
 
             Vector3 direction = (targetPoint - muzzleTransform.position).normalized;
-            Bullet bullet = bulletPool.Spawn(muzzleTransform.position, Quaternion.LookRotation(direction));
-            bullet.Launch(direction, bulletSpeed, bulletLifetime);
+            bulletPool.Spawn(muzzleTransform.position, Quaternion.LookRotation(direction));
         }
     }
 }
