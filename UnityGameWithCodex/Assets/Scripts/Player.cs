@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Assertions;
-using UnityEngine.Pool;
 
 namespace UnityGameWithCodex
 {
@@ -16,10 +15,10 @@ namespace UnityGameWithCodex
         [SerializeField] private Bullet bulletPrefab;
         [SerializeField] private float bulletSpeed = 40f;
         [SerializeField] private float bulletLifetime = 3f;
+        [SerializeField] private BulletPool bulletPool;
 
         private float pitch;
         private float yaw;
-        private ObjectPool<Bullet> bulletPool;
 
         private void Awake()
         {
@@ -39,8 +38,6 @@ namespace UnityGameWithCodex
             Vector3 currentEulerAngles = targetCamera.transform.localEulerAngles;
             pitch = currentEulerAngles.x.NormalizeAngle();
             yaw = currentEulerAngles.y.NormalizeAngle();
-
-            bulletPool = new ObjectPool<Bullet>(CreateBullet, OnGetBullet, OnReleaseBullet, OnDestroyBullet);
         }
 
         private void Update()
@@ -66,9 +63,9 @@ namespace UnityGameWithCodex
         private void Shoot()
         {
             Assert.IsNotNull(muzzleTransform, "Player requires a muzzle transform.");
-            Assert.IsNotNull(bulletPrefab, "Player requires a bullet prefab.");
+            Assert.IsNotNull(bulletPool, "Player requires a bullet pool.");
 
-            if (muzzleTransform == null || bulletPrefab == null)
+            if (muzzleTransform == null || bulletPool == null)
             {
                 return;
             }
@@ -82,37 +79,8 @@ namespace UnityGameWithCodex
             }
 
             Vector3 direction = (targetPoint - muzzleTransform.position).normalized;
-            Bullet bullet = bulletPool.Get();
-            bullet.transform.SetPositionAndRotation(muzzleTransform.position, Quaternion.LookRotation(direction));
+            Bullet bullet = bulletPool.Spawn(muzzleTransform.position, Quaternion.LookRotation(direction));
             bullet.Launch(direction, bulletSpeed, bulletLifetime);
-        }
-
-        private Bullet CreateBullet()
-        {
-            Bullet bullet = Instantiate(bulletPrefab);
-            bullet.SetPool(bulletPool);
-            bullet.gameObject.SetActive(false);
-            return bullet;
-        }
-
-        private static void OnGetBullet(Bullet bullet)
-        {
-            bullet.gameObject.SetActive(true);
-        }
-
-        private static void OnReleaseBullet(Bullet bullet)
-        {
-            bullet.gameObject.SetActive(false);
-        }
-
-        private static void OnDestroyBullet(Bullet bullet)
-        {
-            Destroy(bullet.gameObject);
-        }
-
-        private void OnDestroy()
-        {
-            bulletPool?.Clear();
         }
     }
 }
