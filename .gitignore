@@ -17,8 +17,10 @@
 # Visual Studio / Rider
 .vs/
 .idea/
+.vscode/
 *.csproj
 *.sln
+*.slnx
 *.suo
 *.user
 *.userprefs
