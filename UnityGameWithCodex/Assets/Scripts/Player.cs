@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Assertions;
 
 public class Player : MonoBehaviour
 {
@@ -16,12 +17,17 @@ public class Player : MonoBehaviour
             targetCamera = GetComponentInChildren<Camera>();
         }
 
-        if (targetCamera != null)
+        Assert.IsNotNull(targetCamera, "Player requires a target camera.");
+
+        if (targetCamera == null)
         {
-            Vector3 currentEulerAngles = targetCamera.transform.localEulerAngles;
-            pitch = NormalizeAngle(currentEulerAngles.x);
-            yaw = NormalizeAngle(currentEulerAngles.y);
+            enabled = false;
+            return;
         }
+
+        Vector3 currentEulerAngles = targetCamera.transform.localEulerAngles;
+        pitch = NormalizeAngle(currentEulerAngles.x);
+        yaw = NormalizeAngle(currentEulerAngles.y);
     }
 
     private void Update()

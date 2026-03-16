@@ -461,7 +461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15b1349ec832027489adb140279190ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
-  targetCamera: {fileID: 0}
+  targetCamera: {fileID: 330585545}
   sensitivity: 0.1
 --- !u!4 &1928117972
 Transform:
