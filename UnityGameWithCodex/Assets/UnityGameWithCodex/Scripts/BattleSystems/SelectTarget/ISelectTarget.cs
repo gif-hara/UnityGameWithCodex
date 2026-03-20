@@ -1,4 +1,4 @@
-namespace UnityGameWithCodex.BattleControllers
+namespace UnityGameWithCodex.BattleControllers.SelectTarget
 {
     public interface ISelectTarget
     {
