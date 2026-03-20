@@ -17,6 +17,7 @@ namespace UnityGameWithCodex
             [SerializeField] private int magicalDefensePower = 10;
             [SerializeField] private int agility = 10;
             [SerializeField] private float cooldown;
+            [SerializeField] private ActiveSkill activeSkill;
 
             public BattleCharacter()
             {
@@ -35,6 +36,7 @@ namespace UnityGameWithCodex
             public int MagicalDefensePower => magicalDefensePower;
             public int Agility => agility;
             public bool IsDead => hp <= 0;
+            public ActiveSkill ActiveSkill => activeSkill;
             public float Cooldown
             {
                 get => cooldown;
@@ -93,13 +95,13 @@ namespace UnityGameWithCodex
             while (!allies.IsAllDead && !enemies.IsAllDead)
             {
                 var deltaTime = Time.deltaTime;
-                TickCharacters(allies, deltaTime);
-                TickCharacters(enemies, deltaTime);
+                await TickCharactersAsync(allies, deltaTime);
+                await TickCharactersAsync(enemies, deltaTime);
                 await UniTask.NextFrame();
             }
         }
 
-        private static void TickCharacters(Party party, float deltaTime)
+        private static async UniTask TickCharactersAsync(Party party, float deltaTime)
         {
             for (int index = 0; index < party.Characters.Count; index++)
             {
@@ -116,8 +118,15 @@ namespace UnityGameWithCodex
                     continue;
                 }
 
-                Debug.Log($"{character.Name} is ready");
                 character.Cooldown = 0f;
+
+                if (character.ActiveSkill == null)
+                {
+                    continue;
+                }
+
+                var battleContext = new BattleContext(character);
+                await character.ActiveSkill.InvokeAsync(battleContext);
             }
         }
     }
