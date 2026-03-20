@@ -9,7 +9,7 @@ namespace UnityGameWithCodex.FeedbackSystems.Actions
     [Serializable]
     public sealed class GiveDamage : IFeedback<BattleContext>
     {
-        [SerializeField] private int damage = 1;
+        [SerializeField] private float damage = 1f;
 
         public UniTask PlayAsync(BattleContext context, CancellationToken cancellationToken)
         {
@@ -20,7 +20,8 @@ namespace UnityGameWithCodex.FeedbackSystems.Actions
                     continue;
                 }
 
-                character.TakeDamage(damage);
+                var calculatedDamage = Mathf.RoundToInt(context.ActingCharacter.PhysicalAttackPower * damage);
+                character.TakeDamage(calculatedDamage);
                 return UniTask.CompletedTask;
             }
 
