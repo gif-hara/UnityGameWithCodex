@@ -1,7 +1,9 @@
 {
     "name": "UnityGameWithCodex",
     "rootNamespace": "UnityGameWithCodex",
-    "references": [],
+    "references": [
+        "UniTask"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

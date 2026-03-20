@@ -35,3 +35,6 @@
 # OS files
 .DS_Store
 Thumbs.db
+
+
+UnityGameWithCodex/Packages/nuget-packages/*
