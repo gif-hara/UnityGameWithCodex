@@ -10,21 +10,25 @@ namespace UnityGameWithCodex.FeedbackSystems.Actions
     public sealed class GiveDamage : IFeedback<BattleContext>
     {
         [SerializeField] private float damage = 1f;
+        [SerializeReference, SubclassSelector]
+        private ISelectTarget selectTarget;
 
         public UniTask PlayAsync(BattleContext context, CancellationToken cancellationToken)
         {
-            foreach (var character in context.OpponentParty.Characters)
+            if (selectTarget == null)
             {
-                if (character.IsDead)
-                {
-                    continue;
-                }
-
-                var calculatedDamage = Mathf.RoundToInt(context.ActingCharacter.PhysicalAttackPower * damage);
-                character.TakeDamage(calculatedDamage);
+                Debug.LogWarning("GiveDamage target selector is not configured.");
                 return UniTask.CompletedTask;
             }
 
+            var target = selectTarget.Select(context);
+            if (target == null || target.IsDead)
+            {
+                return UniTask.CompletedTask;
+            }
+
+            var calculatedDamage = Mathf.RoundToInt(context.ActingCharacter.PhysicalAttackPower * damage);
+            target.TakeDamage(calculatedDamage);
             return UniTask.CompletedTask;
         }
     }
