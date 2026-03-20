@@ -471,7 +471,7 @@ MonoBehaviour:
       magicalDefensePower: 5
       agility: 10
       cooldown: 0
-      activeSkill: {fileID: 0}
+      activeSkill: {fileID: 11400000, guid: ed5e719c3149b094e8bb0201863d3b1f, type: 2}
   enemies:
     characters:
     - name: "\u65751"
@@ -482,7 +482,7 @@ MonoBehaviour:
       magicalDefensePower: 5
       agility: 10
       cooldown: 0
-      activeSkill: {fileID: 0}
+      activeSkill: {fileID: 11400000, guid: ed5e719c3149b094e8bb0201863d3b1f, type: 2}
 --- !u!4 &847358939
 Transform:
   m_ObjectHideFlags: 0
