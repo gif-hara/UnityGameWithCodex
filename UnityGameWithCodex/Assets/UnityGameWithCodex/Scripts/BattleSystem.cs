@@ -84,9 +84,9 @@ namespace UnityGameWithCodex
                         return true;
                     }
 
-                    for (int index = 0; index < characters.Count; index++)
+                    foreach (var character in characters)
                     {
-                        if (!characters[index].IsDead)
+                        if (!character.IsDead)
                         {
                             return false;
                         }
@@ -98,9 +98,9 @@ namespace UnityGameWithCodex
 
             public void Initialize()
             {
-                for (var index = 0; index < characters.Count; index++)
+                foreach (var character in characters)
                 {
-                    characters[index].Initialize();
+                    character.Initialize();
                 }
             }
         }
@@ -129,9 +129,8 @@ namespace UnityGameWithCodex
 
         private static async UniTask TickCharactersAsync(Party allyParty, Party opponentParty, float deltaTime)
         {
-            for (var index = 0; index < allyParty.Characters.Count; index++)
+            foreach (var character in allyParty.Characters)
             {
-                var character = allyParty.Characters[index];
                 if (character.IsDead)
                 {
                     continue;
