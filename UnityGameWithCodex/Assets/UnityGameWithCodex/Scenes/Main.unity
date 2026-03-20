@@ -461,6 +461,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e070dab96bb3ba941a569f6c2e7ed1ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityGameWithCodex::UnityGameWithCodex.MainSceneController
+  allies:
+    characters: []
+  enemies:
+    characters: []
 --- !u!4 &847358939
 Transform:
   m_ObjectHideFlags: 0

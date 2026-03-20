@@ -6,8 +6,8 @@ namespace UnityGameWithCodex
 {
     public class MainSceneController : MonoBehaviour
     {
-        [SerializeField] private List<BattleSystem.BattleCharacter> allies = new();
-        [SerializeField] private List<BattleSystem.BattleCharacter> enemies = new();
+        [SerializeField] private BattleSystem.Party allies = new();
+        [SerializeField] private BattleSystem.Party enemies = new();
 
         private async UniTask Start()
         {
@@ -19,14 +19,14 @@ namespace UnityGameWithCodex
 
         private void EnsureCharactersExist()
         {
-            if (allies.Count == 0)
+            if (allies.Characters.Count == 0)
             {
-                allies.Add(new BattleSystem.BattleCharacter());
+                allies.Characters.Add(new BattleSystem.BattleCharacter("Ally"));
             }
 
-            if (enemies.Count == 0)
+            if (enemies.Characters.Count == 0)
             {
-                enemies.Add(new BattleSystem.BattleCharacter());
+                enemies.Characters.Add(new BattleSystem.BattleCharacter("Enemy"));
             }
         }
     }
