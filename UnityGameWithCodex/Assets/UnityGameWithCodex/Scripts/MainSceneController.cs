@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -6,27 +5,27 @@ namespace UnityGameWithCodex
 {
     public class MainSceneController : MonoBehaviour
     {
-        [SerializeField] private BattleSystem.Party allies = new();
-        [SerializeField] private BattleSystem.Party enemies = new();
+        [SerializeField] private BattleSystem.Party playerParty = new();
+        [SerializeField] private BattleSystem.Party enemyParty = new();
 
         private async UniTaskVoid Start()
         {
             EnsureCharactersExist();
 
-            var battleSystem = new BattleSystem(allies, enemies);
+            var battleSystem = new BattleSystem(playerParty, enemyParty);
             await battleSystem.BeginAsync();
         }
 
         private void EnsureCharactersExist()
         {
-            if (allies.Characters.Count == 0)
+            if (playerParty.Characters.Count == 0)
             {
-                allies.Characters.Add(new BattleSystem.BattleCharacter("Ally"));
+                playerParty.Characters.Add(new BattleSystem.BattleCharacter("Ally"));
             }
 
-            if (enemies.Characters.Count == 0)
+            if (enemyParty.Characters.Count == 0)
             {
-                enemies.Characters.Add(new BattleSystem.BattleCharacter("Enemy"));
+                enemyParty.Characters.Add(new BattleSystem.BattleCharacter("Enemy"));
             }
         }
     }

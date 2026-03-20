@@ -17,14 +17,14 @@ namespace UnityGameWithCodex
         public string SkillName => skillName;
         public float CoolTime => coolTime;
 
-        public virtual UniTask InvokeAsync(BattleContext battleContext)
+        public virtual UniTask InvokeAsync(BattleContext battleContext, CancellationToken cancellationToken)
         {
             if (feedbacks == null)
             {
                 return UniTask.CompletedTask;
             }
 
-            return feedbacks.PlayAsync(battleContext, CancellationToken.None);
+            return feedbacks.PlayAsync(battleContext, cancellationToken);
         }
     }
 }

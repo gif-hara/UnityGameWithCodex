@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -105,24 +106,24 @@ namespace UnityGameWithCodex
             }
         }
 
-        private readonly Party allies;
-        private readonly Party enemies;
+        private readonly Party playerParty;
+        private readonly Party enemyParty;
 
-        public BattleSystem(Party allies, Party enemies)
+        public BattleSystem(Party playerParty, Party enemyParty)
         {
-            this.allies = allies;
-            this.enemies = enemies;
-            allies.Initialize();
-            enemies.Initialize();
+            this.playerParty = playerParty;
+            this.enemyParty = enemyParty;
+            playerParty.Initialize();
+            enemyParty.Initialize();
         }
 
         public async UniTask BeginAsync()
         {
-            while (!allies.IsAllDead && !enemies.IsAllDead)
+            while (!playerParty.IsAllDead && !enemyParty.IsAllDead)
             {
                 var deltaTime = Time.deltaTime;
-                await TickCharactersAsync(allies, enemies, deltaTime);
-                await TickCharactersAsync(enemies, allies, deltaTime);
+                await TickCharactersAsync(playerParty, enemyParty, deltaTime);
+                await TickCharactersAsync(enemyParty, playerParty, deltaTime);
                 await UniTask.NextFrame();
             }
         }
@@ -155,7 +156,7 @@ namespace UnityGameWithCodex
                     character.CoolTimes[skillIndex] = 0f;
 
                     var battleContext = new BattleContext(character, allyParty, opponentParty);
-                    await activeSkill.InvokeAsync(battleContext);
+                    await activeSkill.InvokeAsync(battleContext, CancellationToken.None);
                 }
             }
         }
