@@ -1,6 +1,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using HKFeedback;
+using HKFeedback.Extensions;
 using UnityEngine;
 
 namespace UnityGameWithCodex
@@ -23,18 +24,7 @@ namespace UnityGameWithCodex
                 return UniTask.CompletedTask;
             }
 
-            for (var index = 0; index < feedbacks.Length; index++)
-            {
-                var feedback = feedbacks[index];
-                if (feedback == null)
-                {
-                    continue;
-                }
-
-                feedback.PlayAsync(battleContext, CancellationToken.None).Forget();
-            }
-
-            return UniTask.CompletedTask;
+            return feedbacks.PlayAsync(battleContext, CancellationToken.None);
         }
     }
 }
