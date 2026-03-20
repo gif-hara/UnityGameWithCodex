@@ -462,9 +462,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityGameWithCodex::UnityGameWithCodex.MainSceneController
   allies:
-    characters: []
+    characters:
+    - name: "\u5473\u65B91"
+      hp: 100
+      physicalAttackPower: 10
+      magicalAttackPower: 10
+      physicalDefensePower: 5
+      magicalDefensePower: 5
+      agility: 10
+      cooldown: 0
+      activeSkill: {fileID: 11400000, guid: ed5e719c3149b094e8bb0201863d3b1f, type: 2}
   enemies:
-    characters: []
+    characters:
+    - name: "\u65751"
+      hp: 30
+      physicalAttackPower: 10
+      magicalAttackPower: 10
+      physicalDefensePower: 5
+      magicalDefensePower: 5
+      agility: 10
+      cooldown: 0
+      activeSkill: {fileID: 11400000, guid: ed5e719c3149b094e8bb0201863d3b1f, type: 2}
 --- !u!4 &847358939
 Transform:
   m_ObjectHideFlags: 0

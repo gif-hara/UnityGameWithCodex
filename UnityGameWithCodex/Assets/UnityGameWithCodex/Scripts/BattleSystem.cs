@@ -17,6 +17,7 @@ namespace UnityGameWithCodex
             [SerializeField] private int magicalDefensePower = 10;
             [SerializeField] private int agility = 10;
             [SerializeField] private float cooldown;
+            [SerializeField] private ActiveSkill activeSkill;
 
             public BattleCharacter()
             {
@@ -35,6 +36,7 @@ namespace UnityGameWithCodex
             public int MagicalDefensePower => magicalDefensePower;
             public int Agility => agility;
             public bool IsDead => hp <= 0;
+            public ActiveSkill ActiveSkill => activeSkill;
             public float Cooldown
             {
                 get => cooldown;
@@ -93,17 +95,17 @@ namespace UnityGameWithCodex
             while (!allies.IsAllDead && !enemies.IsAllDead)
             {
                 var deltaTime = Time.deltaTime;
-                TickCharacters(allies, deltaTime);
-                TickCharacters(enemies, deltaTime);
+                await TickCharactersAsync(allies, enemies, deltaTime);
+                await TickCharactersAsync(enemies, allies, deltaTime);
                 await UniTask.NextFrame();
             }
         }
 
-        private static void TickCharacters(Party party, float deltaTime)
+        private static async UniTask TickCharactersAsync(Party allyParty, Party opponentParty, float deltaTime)
         {
-            for (int index = 0; index < party.Characters.Count; index++)
+            for (var index = 0; index < allyParty.Characters.Count; index++)
             {
-                var character = party.Characters[index];
+                var character = allyParty.Characters[index];
                 if (character.IsDead)
                 {
                     continue;
@@ -116,8 +118,16 @@ namespace UnityGameWithCodex
                     continue;
                 }
 
-                Debug.Log($"{character.Name} is ready");
                 character.Cooldown = 0f;
+
+                if (character.ActiveSkill == null)
+                {
+                    Debug.LogWarning($"{character.Name} has no active skill.");
+                    continue;
+                }
+
+                var battleContext = new BattleContext(character, allyParty, opponentParty);
+                await character.ActiveSkill.InvokeAsync(battleContext);
             }
         }
     }
