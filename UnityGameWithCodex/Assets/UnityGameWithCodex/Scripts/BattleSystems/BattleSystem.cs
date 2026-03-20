@@ -3,7 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace UnityGameWithCodex
+namespace UnityGameWithCodex.BattleControllers
 {
     public class BattleSystem
     {

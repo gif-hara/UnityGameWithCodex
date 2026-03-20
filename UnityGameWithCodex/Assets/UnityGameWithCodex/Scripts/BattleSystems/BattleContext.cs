@@ -1,4 +1,4 @@
-namespace UnityGameWithCodex
+namespace UnityGameWithCodex.BattleControllers
 {
     public readonly struct BattleContext
     {

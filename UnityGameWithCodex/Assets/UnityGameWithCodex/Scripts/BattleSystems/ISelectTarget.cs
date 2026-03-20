@@ -1,4 +1,4 @@
-namespace UnityGameWithCodex.FeedbackSystems.Actions
+namespace UnityGameWithCodex.BattleControllers
 {
     public interface ISelectTarget
     {
