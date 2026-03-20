@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace UnityGameWithCodex
 {
@@ -18,6 +19,8 @@ namespace UnityGameWithCodex
             [SerializeField] private int agility = 10;
             [SerializeField] private ActiveSkill[] activeSkills;
             [SerializeField] private float[] coolTimes;
+            [SerializeField, FormerlySerializedAs("activeSkill")] private ActiveSkill legacyActiveSkill;
+            [SerializeField, FormerlySerializedAs("cooldown")] private float legacyCoolTime;
 
             public BattleCharacter()
             {
@@ -39,25 +42,36 @@ namespace UnityGameWithCodex
             public ActiveSkill[] ActiveSkills => activeSkills;
             public float[] CoolTimes => coolTimes;
 
-            public void EnsureCoolTimes()
+            public void Initialize()
             {
                 activeSkills ??= System.Array.Empty<ActiveSkill>();
-                if (coolTimes != null && coolTimes.Length == activeSkills.Length)
+
+                if (activeSkills.Length == 0 && legacyActiveSkill != null)
                 {
-                    return;
+                    activeSkills = new[] { legacyActiveSkill };
                 }
 
-                var resizedCoolTimes = new float[activeSkills.Length];
-                if (coolTimes != null)
+                if (coolTimes == null || coolTimes.Length != activeSkills.Length)
                 {
-                    var copyLength = Mathf.Min(coolTimes.Length, resizedCoolTimes.Length);
-                    for (var index = 0; index < copyLength; index++)
+                    var resizedCoolTimes = new float[activeSkills.Length];
+                    if (coolTimes != null)
                     {
-                        resizedCoolTimes[index] = coolTimes[index];
+                        var copyLength = Mathf.Min(coolTimes.Length, resizedCoolTimes.Length);
+                        for (var index = 0; index < copyLength; index++)
+                        {
+                            resizedCoolTimes[index] = coolTimes[index];
+                        }
                     }
+                    else if (resizedCoolTimes.Length > 0)
+                    {
+                        resizedCoolTimes[0] = legacyCoolTime;
+                    }
+
+                    coolTimes = resizedCoolTimes;
                 }
 
-                coolTimes = resizedCoolTimes;
+                legacyActiveSkill = null;
+                legacyCoolTime = 0f;
             }
         }
 
@@ -96,6 +110,14 @@ namespace UnityGameWithCodex
                     return true;
                 }
             }
+
+            public void Initialize()
+            {
+                for (var index = 0; index < characters.Count; index++)
+                {
+                    characters[index].Initialize();
+                }
+            }
         }
 
         private readonly Party allies;
@@ -105,6 +127,8 @@ namespace UnityGameWithCodex
         {
             this.allies = allies;
             this.enemies = enemies;
+            allies.Initialize();
+            enemies.Initialize();
         }
 
         public async UniTask BeginAsync()
@@ -128,7 +152,6 @@ namespace UnityGameWithCodex
                     continue;
                 }
 
-                character.EnsureCoolTimes();
                 for (var skillIndex = 0; skillIndex < character.ActiveSkills.Length; skillIndex++)
                 {
                     var activeSkill = character.ActiveSkills[skillIndex];
