@@ -59,6 +59,11 @@ namespace UnityGameWithCodex
                     coolTimes = resizedCoolTimes;
                 }
             }
+
+            public void TakeDamage(int damage)
+            {
+                hp = Mathf.Max(0, hp - Mathf.Max(0, damage));
+            }
         }
 
         [System.Serializable]
