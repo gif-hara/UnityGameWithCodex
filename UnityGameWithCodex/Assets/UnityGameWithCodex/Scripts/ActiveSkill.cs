@@ -8,8 +8,13 @@ namespace UnityGameWithCodex
     [CreateAssetMenu(menuName = "UnityGameWithCodex/Active Skill")]
     public class ActiveSkill : ScriptableObject
     {
+        [SerializeField] private string skillName = "Active Skill";
+        [SerializeField] private float coolTime = 1f;
         [SerializeReference, SubclassSelector]
         private IFeedback<BattleContext>[] feedbacks;
+
+        public string SkillName => skillName;
+        public float CoolTime => coolTime;
 
         public virtual UniTask InvokeAsync(BattleContext battleContext)
         {

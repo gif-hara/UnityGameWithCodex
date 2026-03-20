@@ -16,8 +16,8 @@ namespace UnityGameWithCodex
             [SerializeField] private int physicalDefensePower = 10;
             [SerializeField] private int magicalDefensePower = 10;
             [SerializeField] private int agility = 10;
-            [SerializeField] private float cooldown;
-            [SerializeField] private ActiveSkill activeSkill;
+            [SerializeField] private ActiveSkill[] activeSkills;
+            [SerializeField] private float[] coolTimes;
 
             public BattleCharacter()
             {
@@ -36,11 +36,28 @@ namespace UnityGameWithCodex
             public int MagicalDefensePower => magicalDefensePower;
             public int Agility => agility;
             public bool IsDead => hp <= 0;
-            public ActiveSkill ActiveSkill => activeSkill;
-            public float Cooldown
+            public ActiveSkill[] ActiveSkills => activeSkills;
+            public float[] CoolTimes => coolTimes;
+
+            public void EnsureCoolTimes()
             {
-                get => cooldown;
-                set => cooldown = value;
+                activeSkills ??= System.Array.Empty<ActiveSkill>();
+                if (coolTimes != null && coolTimes.Length == activeSkills.Length)
+                {
+                    return;
+                }
+
+                var resizedCoolTimes = new float[activeSkills.Length];
+                if (coolTimes != null)
+                {
+                    var copyLength = Mathf.Min(coolTimes.Length, resizedCoolTimes.Length);
+                    for (var index = 0; index < copyLength; index++)
+                    {
+                        resizedCoolTimes[index] = coolTimes[index];
+                    }
+                }
+
+                coolTimes = resizedCoolTimes;
             }
         }
 
@@ -111,23 +128,28 @@ namespace UnityGameWithCodex
                     continue;
                 }
 
-                character.Cooldown += deltaTime * (1f + (character.Agility / 100.0f));
-
-                if (character.Cooldown < 1f)
+                character.EnsureCoolTimes();
+                for (var skillIndex = 0; skillIndex < character.ActiveSkills.Length; skillIndex++)
                 {
-                    continue;
+                    var activeSkill = character.ActiveSkills[skillIndex];
+                    character.CoolTimes[skillIndex] += deltaTime * (1f + (character.Agility / 100.0f));
+
+                    if (activeSkill == null)
+                    {
+                        Debug.LogWarning($"{character.Name} has no active skill.");
+                        continue;
+                    }
+
+                    if (character.CoolTimes[skillIndex] < activeSkill.CoolTime)
+                    {
+                        continue;
+                    }
+
+                    character.CoolTimes[skillIndex] = 0f;
+
+                    var battleContext = new BattleContext(character, allyParty, opponentParty);
+                    await activeSkill.InvokeAsync(battleContext);
                 }
-
-                character.Cooldown = 0f;
-
-                if (character.ActiveSkill == null)
-                {
-                    Debug.LogWarning($"{character.Name} has no active skill.");
-                    continue;
-                }
-
-                var battleContext = new BattleContext(character, allyParty, opponentParty);
-                await character.ActiveSkill.InvokeAsync(battleContext);
             }
         }
     }
