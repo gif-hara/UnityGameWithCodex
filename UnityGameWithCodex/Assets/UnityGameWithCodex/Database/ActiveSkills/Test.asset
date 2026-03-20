@@ -15,11 +15,16 @@ MonoBehaviour:
   skillName: Active Skill
   coolTime: 1
   feedbacks:
-  - rid: 8726729690831126833
+  - rid: 8726729690831126837
   references:
     version: 2
     RefIds:
-    - rid: 8726729690831126833
-      type: {class: 'Log`1[[UnityGameWithCodex.BattleControllers.BattleContext, UnityGameWithCodex]]', ns: HKFeedback.Actions, asm: HKFeedback}
+    - rid: 8726729690831126837
+      type: {class: 'GiveDamage`1[[UnityGameWithCodex.BattleControllers.BattleContext, UnityGameWithCodex]]', ns: UnityGameWithCodex.FeedbackSystems.Actions, asm: UnityGameWithCodex}
       data:
-        message: Invoke!
+        power: 1
+        selectTarget:
+          rid: 8726729690831126842
+    - rid: 8726729690831126842
+      type: {class: WeakestOpponent, ns: UnityGameWithCodex.BattleControllers.SelectTarget, asm: UnityGameWithCodex}
+      data: 
