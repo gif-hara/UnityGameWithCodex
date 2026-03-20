@@ -1,8 +1,6 @@
-using UnityEngine;
-
 namespace UnityGameWithCodex
 {
-    public sealed class BattleContext
+    public readonly struct BattleContext
     {
         public BattleContext(BattleSystem.BattleCharacter actingCharacter, BattleSystem.Party allyParty, BattleSystem.Party opponentParty)
         {
