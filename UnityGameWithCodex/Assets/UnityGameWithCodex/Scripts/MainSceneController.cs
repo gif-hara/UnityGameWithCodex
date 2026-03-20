@@ -10,23 +10,8 @@ namespace UnityGameWithCodex
 
         private async UniTaskVoid Start()
         {
-            EnsureCharactersExist();
-
             var battleSystem = new BattleSystem(playerParty, enemyParty);
             await battleSystem.BeginAsync(destroyCancellationToken);
-        }
-
-        private void EnsureCharactersExist()
-        {
-            if (playerParty.Characters.Count == 0)
-            {
-                playerParty.Characters.Add(new BattleSystem.BattleCharacter("Ally"));
-            }
-
-            if (enemyParty.Characters.Count == 0)
-            {
-                enemyParty.Characters.Add(new BattleSystem.BattleCharacter("Enemy"));
-            }
         }
     }
 }
