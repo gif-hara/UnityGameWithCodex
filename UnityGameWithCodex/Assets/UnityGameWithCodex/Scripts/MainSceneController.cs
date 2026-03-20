@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityGameWithCodex.BattleControllers;
 
 namespace UnityGameWithCodex
 {
@@ -12,6 +13,7 @@ namespace UnityGameWithCodex
         {
             var battleSystem = new BattleSystem(playerParty, enemyParty);
             await battleSystem.BeginAsync(destroyCancellationToken);
+            Debug.Log("Battle ended.");
         }
     }
 }
