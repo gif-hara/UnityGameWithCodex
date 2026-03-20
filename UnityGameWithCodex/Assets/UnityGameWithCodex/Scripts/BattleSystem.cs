@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace UnityGameWithCodex
 {
@@ -19,8 +18,6 @@ namespace UnityGameWithCodex
             [SerializeField] private int agility = 10;
             [SerializeField] private ActiveSkill[] activeSkills;
             [SerializeField] private float[] coolTimes;
-            [SerializeField, FormerlySerializedAs("activeSkill")] private ActiveSkill legacyActiveSkill;
-            [SerializeField, FormerlySerializedAs("cooldown")] private float legacyCoolTime;
 
             public BattleCharacter()
             {
@@ -46,11 +43,6 @@ namespace UnityGameWithCodex
             {
                 activeSkills ??= System.Array.Empty<ActiveSkill>();
 
-                if (activeSkills.Length == 0 && legacyActiveSkill != null)
-                {
-                    activeSkills = new[] { legacyActiveSkill };
-                }
-
                 if (coolTimes == null || coolTimes.Length != activeSkills.Length)
                 {
                     var resizedCoolTimes = new float[activeSkills.Length];
@@ -62,16 +54,9 @@ namespace UnityGameWithCodex
                             resizedCoolTimes[index] = coolTimes[index];
                         }
                     }
-                    else if (resizedCoolTimes.Length > 0)
-                    {
-                        resizedCoolTimes[0] = legacyCoolTime;
-                    }
 
                     coolTimes = resizedCoolTimes;
                 }
-
-                legacyActiveSkill = null;
-                legacyCoolTime = 0f;
             }
         }
 
