@@ -8,27 +8,28 @@ using UnityGameWithCodex.BattleControllers;
 namespace UnityGameWithCodex.FeedbackSystems.Actions
 {
     [Serializable]
-    public sealed class GiveDamage : IFeedback<BattleContext>
+    public sealed class GiveDamage<TContext> : IFeedback<TContext> where TContext : IProvider<BattleContext>
     {
         [SerializeField] private float power = 1f;
         [SerializeReference, SubclassSelector]
         private ISelectTarget selectTarget;
 
-        public UniTask PlayAsync(BattleContext context, CancellationToken cancellationToken)
+        public UniTask PlayAsync(TContext context, CancellationToken cancellationToken)
         {
+            var battleContext = context.Provide();
             if (selectTarget == null)
             {
                 Debug.LogWarning("GiveDamage target selector is not configured.");
                 return UniTask.CompletedTask;
             }
 
-            var target = selectTarget.Select(context);
+            var target = selectTarget.Select(battleContext);
             if (target == null || target.IsDead)
             {
                 return UniTask.CompletedTask;
             }
 
-            var calculatedDamage = Mathf.RoundToInt(context.ActingCharacter.PhysicalAttackPower * power);
+            var calculatedDamage = Mathf.RoundToInt(battleContext.ActingCharacter.PhysicalAttackPower * power);
             target.TakeDamage(calculatedDamage);
             return UniTask.CompletedTask;
         }
