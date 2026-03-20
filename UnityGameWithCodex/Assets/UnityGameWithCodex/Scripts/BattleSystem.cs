@@ -92,7 +92,7 @@ namespace UnityGameWithCodex
         {
             while (!allies.IsAllDead && !enemies.IsAllDead)
             {
-                float deltaTime = Time.deltaTime;
+                var deltaTime = Time.deltaTime;
                 TickCharacters(allies, deltaTime);
                 TickCharacters(enemies, deltaTime);
                 await UniTask.NextFrame();
@@ -103,7 +103,7 @@ namespace UnityGameWithCodex
         {
             for (int index = 0; index < party.Characters.Count; index++)
             {
-                BattleCharacter character = party.Characters[index];
+                var character = party.Characters[index];
                 if (character.IsDead)
                 {
                     continue;

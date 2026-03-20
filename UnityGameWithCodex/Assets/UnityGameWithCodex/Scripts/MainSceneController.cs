@@ -9,11 +9,11 @@ namespace UnityGameWithCodex
         [SerializeField] private BattleSystem.Party allies = new();
         [SerializeField] private BattleSystem.Party enemies = new();
 
-        private async UniTask Start()
+        private async UniTaskVoid Start()
         {
             EnsureCharactersExist();
 
-            BattleSystem battleSystem = new(allies, enemies);
+            var battleSystem = new BattleSystem(allies, enemies);
             await battleSystem.BeginAsync();
         }
 
