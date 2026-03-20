@@ -13,7 +13,7 @@ namespace UnityGameWithCodex
             EnsureCharactersExist();
 
             var battleSystem = new BattleSystem(playerParty, enemyParty);
-            await battleSystem.BeginAsync();
+            await battleSystem.BeginAsync(destroyCancellationToken);
         }
 
         private void EnsureCharactersExist()

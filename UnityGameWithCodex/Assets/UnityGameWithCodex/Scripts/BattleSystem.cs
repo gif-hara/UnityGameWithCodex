@@ -117,18 +117,19 @@ namespace UnityGameWithCodex
             enemyParty.Initialize();
         }
 
-        public async UniTask BeginAsync()
+        public async UniTask BeginAsync(CancellationToken cancellationToken)
         {
             while (!playerParty.IsAllDead && !enemyParty.IsAllDead)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var deltaTime = Time.deltaTime;
-                await TickCharactersAsync(playerParty, enemyParty, deltaTime);
-                await TickCharactersAsync(enemyParty, playerParty, deltaTime);
-                await UniTask.NextFrame();
+                await TickCharactersAsync(playerParty, enemyParty, deltaTime, cancellationToken);
+                await TickCharactersAsync(enemyParty, playerParty, deltaTime, cancellationToken);
+                await UniTask.NextFrame(cancellationToken);
             }
         }
 
-        private static async UniTask TickCharactersAsync(Party allyParty, Party opponentParty, float deltaTime)
+        private static async UniTask TickCharactersAsync(Party allyParty, Party opponentParty, float deltaTime, CancellationToken cancellationToken)
         {
             foreach (var character in allyParty.Characters)
             {
@@ -156,7 +157,7 @@ namespace UnityGameWithCodex
                     character.CoolTimes[skillIndex] = 0f;
 
                     var battleContext = new BattleContext(character, allyParty, opponentParty);
-                    await activeSkill.InvokeAsync(battleContext, CancellationToken.None);
+                    await activeSkill.InvokeAsync(battleContext, cancellationToken);
                 }
             }
         }
