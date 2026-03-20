@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -105,29 +106,30 @@ namespace UnityGameWithCodex
             }
         }
 
-        private readonly Party allies;
-        private readonly Party enemies;
+        private readonly Party playerParty;
+        private readonly Party enemyParty;
 
-        public BattleSystem(Party allies, Party enemies)
+        public BattleSystem(Party playerParty, Party enemyParty)
         {
-            this.allies = allies;
-            this.enemies = enemies;
-            allies.Initialize();
-            enemies.Initialize();
+            this.playerParty = playerParty;
+            this.enemyParty = enemyParty;
+            playerParty.Initialize();
+            enemyParty.Initialize();
         }
 
-        public async UniTask BeginAsync()
+        public async UniTask BeginAsync(CancellationToken cancellationToken)
         {
-            while (!allies.IsAllDead && !enemies.IsAllDead)
+            while (!playerParty.IsAllDead && !enemyParty.IsAllDead)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var deltaTime = Time.deltaTime;
-                await TickCharactersAsync(allies, enemies, deltaTime);
-                await TickCharactersAsync(enemies, allies, deltaTime);
-                await UniTask.NextFrame();
+                await TickCharactersAsync(playerParty, enemyParty, deltaTime, cancellationToken);
+                await TickCharactersAsync(enemyParty, playerParty, deltaTime, cancellationToken);
+                await UniTask.NextFrame(cancellationToken);
             }
         }
 
-        private static async UniTask TickCharactersAsync(Party allyParty, Party opponentParty, float deltaTime)
+        private static async UniTask TickCharactersAsync(Party allyParty, Party opponentParty, float deltaTime, CancellationToken cancellationToken)
         {
             foreach (var character in allyParty.Characters)
             {
@@ -155,7 +157,7 @@ namespace UnityGameWithCodex
                     character.CoolTimes[skillIndex] = 0f;
 
                     var battleContext = new BattleContext(character, allyParty, opponentParty);
-                    await activeSkill.InvokeAsync(battleContext);
+                    await activeSkill.InvokeAsync(battleContext, cancellationToken);
                 }
             }
         }

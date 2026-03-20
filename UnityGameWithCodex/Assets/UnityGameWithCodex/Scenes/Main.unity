@@ -461,7 +461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e070dab96bb3ba941a569f6c2e7ed1ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityGameWithCodex::UnityGameWithCodex.MainSceneController
-  allies:
+  playerParty:
     characters:
     - name: "\u5473\u65B91"
       hp: 100
@@ -474,7 +474,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: ed5e719c3149b094e8bb0201863d3b1f, type: 2}
       coolTimes:
       - 0
-  enemies:
+  enemyParty:
     characters:
     - name: "\u65751"
       hp: 30
