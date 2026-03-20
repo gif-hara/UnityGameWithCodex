@@ -63,6 +63,7 @@ namespace UnityGameWithCodex.BattleControllers
             public void TakeDamage(int damage)
             {
                 hp = Mathf.Max(0, hp - Mathf.Max(0, damage));
+                Debug.Log($"{name} takes {damage} damage. Remaining HP: {hp}");
             }
         }
 
