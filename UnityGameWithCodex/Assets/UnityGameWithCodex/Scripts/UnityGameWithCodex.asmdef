@@ -2,7 +2,9 @@
     "name": "UnityGameWithCodex",
     "rootNamespace": "UnityGameWithCodex",
     "references": [
-        "UniTask"
+        "UniTask",
+        "HKFeedback",
+        "MackySoft.SerializeReferenceExtensions"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
