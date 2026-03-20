@@ -95,17 +95,17 @@ namespace UnityGameWithCodex
             while (!allies.IsAllDead && !enemies.IsAllDead)
             {
                 var deltaTime = Time.deltaTime;
-                await TickCharactersAsync(allies, deltaTime);
-                await TickCharactersAsync(enemies, deltaTime);
+                await TickCharactersAsync(allies, enemies, deltaTime);
+                await TickCharactersAsync(enemies, allies, deltaTime);
                 await UniTask.NextFrame();
             }
         }
 
-        private static async UniTask TickCharactersAsync(Party party, float deltaTime)
+        private static async UniTask TickCharactersAsync(Party allyParty, Party opponentParty, float deltaTime)
         {
-            for (int index = 0; index < party.Characters.Count; index++)
+            for (var index = 0; index < allyParty.Characters.Count; index++)
             {
-                var character = party.Characters[index];
+                var character = allyParty.Characters[index];
                 if (character.IsDead)
                 {
                     continue;
@@ -122,10 +122,11 @@ namespace UnityGameWithCodex
 
                 if (character.ActiveSkill == null)
                 {
+                    Debug.LogWarning($"{character.Name} has no active skill.");
                     continue;
                 }
 
-                var battleContext = new BattleContext(character);
+                var battleContext = new BattleContext(character, allyParty, opponentParty);
                 await character.ActiveSkill.InvokeAsync(battleContext);
             }
         }
